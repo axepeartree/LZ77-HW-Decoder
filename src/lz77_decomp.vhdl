@@ -24,28 +24,13 @@ architecture behaviour of lz77_decomp is
     signal s_match_position:    integer := 0; -- only for debugging reasons
 begin
     process(clock) is
-        variable v_buffer_head:     std_logic_vector(12 downto 0) := "1111111111111";
-        variable v_match_position:  integer := 0;
     begin
         if rising_edge(clock) and enable = '1' then
-            if to_integer(unsigned(s_buffer_head)) - to_integer(unsigned(offset)) > 0 then
-                v_match_position := to_integer(unsigned(s_buffer_head)) - to_integer(unsigned(offset));
-            else
-                v_match_position := 8191 + (to_integer(unsigned(s_buffer_head)) - to_integer(unsigned(offset)));
-            end if;
-
-            s_match_position <= v_match_position;
-
+            -- move the buffer head to it's next position
             if unsigned(s_buffer_head) + unsigned(length) + 1 > 8191 then
                 s_buffer_head <= std_logic_vector((unsigned(s_buffer_head) + unsigned(length)) - 8191);
             else
                 s_buffer_head <= std_logic_vector((unsigned(s_buffer_head) + unsigned(length)) + 1);
-            end if;
-
-            if to_integer(unsigned(s_buffer_head)) - to_integer(unsigned(offset)) < 0 then
-                -- overflowed, data could be split
-            else
-                -- no overflow
             end if;
         end if;
     end process;
