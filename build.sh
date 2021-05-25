@@ -1,9 +1,20 @@
 ghdl --clean &&
 ghdl --remove &&
 
-ghdl -a --workdir=work src/lz77_decomp.vhdl &&
-ghdl -e --workdir=work lz77_decomp &&
+echo "Building decoder"
 
-ghdl -a --workdir=work test/testbench.vhdl &&
-ghdl -e --workdir=work testbench
+ghdl -a src/lz77_decoder.vhdl &&
+ghdl -e lz77_decoder &&
 
+echo "Building rom"
+
+ghdl -a src/rom.vhdl &&
+ghdl -e rom &&
+
+echo "Building tb"
+
+ghdl -a test/lz77_decoder_tb.vhdl &&
+ghdl -e lz77_decoder_tb &&
+
+ghdl -a test/testbench.vhdl &&
+ghdl -e testbench

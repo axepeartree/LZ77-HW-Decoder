@@ -7,28 +7,15 @@ entity testbench is
 end testbench;
 
 architecture behaviour of testbench is
+    type file_t is file of integer;
     type rom is array (2**8 - 1 downto 0) of std_logic_vector(23 downto 0);
-
-    component lz77_decoder
-        port(
-            offset:         in std_logic_vector(12 downto 0);
-            length:         in std_logic_vector(2 downto 0);
-            byte:           in std_logic_vector(7 downto 0);
-            data_out:       out std_logic_vector(63 downto 0);
-            write_data:     out std_logic;
-
-            clock:          in std_logic;
-            enable:         in std_logic
-        );
-    end component lz77_decoder;
-
-    for dec_0: lz77_decoder use entity work.lz77_decoder;
     signal s_clock:             std_logic := '0';
     signal s_enable:            std_logic := '1';
     signal s_write:             std_logic;
     signal s_offset:            std_logic_vector(12 downto 0);
     signal s_length:            std_logic_vector(2 downto 0);
-    signal s_byte:            std_logic_vector(7 downto 0);
+    signal s_byte:              std_logic_vector(7 downto 0);
+    signal s_data_out:          std_logic_vector(63 downto 0);
     signal s_rom:               rom := (
         0 => x"00000A",
         1 => x"00000B",
@@ -40,15 +27,20 @@ architecture behaviour of testbench is
         others => x"000000"
     );
     signal s_mem_ptr:             integer := 0;
+    file out_buf:        file_t;
 begin
-    dec_0: lz77_decoder port map (
+    decoder_inst: entity work.lz77_decoder port map(
         clock       => s_clock,
         enable      => s_enable,
         write_data  => s_write,
         offset      => s_offset,
         length      => s_length,
+        data_out    => s_data_out,
         byte        => s_byte
     );
+
+    file_open(out_buf, "./output/ram", write_mode);
+
     process
         variable v_token: std_logic_vector(23 downto 0);
         variable v_mem_ptr: integer := s_mem_ptr;
@@ -62,6 +54,12 @@ begin
 
         s_clock <= '1';
         wait for 5 ns;
+
+        if s_write = '1' then
+            write(out_buf, to_integer(unsigned(s_data_out(31 downto 0))));
+            write(out_buf, to_integer(unsigned(s_data_out(63 downto 32))));
+        end if;
+
         s_clock <= '0';
         wait for 5 ns;
     end process;
