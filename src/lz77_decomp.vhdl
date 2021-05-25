@@ -36,6 +36,7 @@ begin
         variable v_carry_bytes:         carry_bytes_type;
         variable v_carry_bytes_count:   integer := 0;
     begin
+        data_out(7 downto 0) <= s_buffer(0);
         if rising_edge(clock) and enable = '1' then
             v_curr_buffer_head := unsigned(s_next_buffer_head);
             v_length := unsigned(length);

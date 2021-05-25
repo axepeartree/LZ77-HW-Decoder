@@ -9,7 +9,7 @@ end testbench;
 architecture behaviour of testbench is
     type rom is array (2**8 - 1 downto 0) of std_logic_vector(23 downto 0);
 
-    component lz77_decomp
+    component lz77_decoder
         port(
             offset:         in std_logic_vector(12 downto 0);
             length:         in std_logic_vector(2 downto 0);
@@ -20,9 +20,9 @@ architecture behaviour of testbench is
             clock:          in std_logic;
             enable:         in std_logic
         );
-    end component lz77_decomp;
+    end component lz77_decoder;
 
-    for dec_0: lz77_decomp use entity work.lz77_decomp;
+    for dec_0: lz77_decoder use entity work.lz77_decoder;
     signal s_clock:             std_logic := '0';
     signal s_enable:            std_logic := '1';
     signal s_write:             std_logic;
@@ -41,7 +41,7 @@ architecture behaviour of testbench is
     );
     signal s_mem_ptr:             integer := 0;
 begin
-    dec_0: lz77_decomp port map (
+    dec_0: lz77_decoder port map (
         clock       => s_clock,
         enable      => s_enable,
         write_data  => s_write,
