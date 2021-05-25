@@ -26,7 +26,7 @@ architecture behaviour of lz77_decomp is
     signal s_carry_bytes_count: integer := 0;
     signal s_carry_bytes:       carry_bytes_type := (others => x"00");
 begin
-    process(clock) is
+    process(clock, enable) is
         variable v_length:              unsigned (2 downto 0);
         variable v_curr_buffer_head:    unsigned(12 downto 0);
         variable v_match_position:      integer := 0;
@@ -98,6 +98,9 @@ begin
 
                 for i in 0 to 7 loop
                     v_carry_bytes(i) := v_carry_bytes(i + 8);
+                end loop;
+                for i in 8 to 15 loop
+                    v_carry_bytes(i) := x"00";
                 end loop;
 
                 v_carry_bytes_count := v_carry_bytes_count - 8;
