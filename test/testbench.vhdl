@@ -18,12 +18,12 @@ architecture behaviour of testbench is
     signal s_data_out:          std_logic_vector(63 downto 0);
     signal s_rom:               rom := (
         0 => x"00000A",
-        1 => x"00000B",
+        1 => x"00090B",
         2 => x"00000C",
-        3 => x"00120A",
-        4 => x"002B0F",
-        5 => x"00120B",
-        6 => x"001B0E",
+        3 => x"00120E",
+        4 => x"001A0F",
+        5 => x"00240A",
+        6 => x"00340A",
         others => x"000000"
     );
     signal s_mem_ptr:             integer := 0;

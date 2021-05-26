@@ -16,12 +16,11 @@ end entity lz77_decoder;
 
 architecture behaviour of lz77_decoder is
     type s_buf_t is array (2**13 - 1 downto 0) of std_logic_vector(7 downto 0);
-    type out_buf_t is array(15 downto 0) of std_logic_vector(7 downto 0);
 
-    signal s_buf:           s_buf_t := (others => x"00");
-    signal s_buf_head:      integer := 8184;
-    signal out_next_word:   integer := 8184;
-    signal out_next_count:  integer := 0;
+    signal s_buf:           s_buf_t := (others => x"00"); -- circular buffer
+    signal s_buf_head:      integer := 0; -- head of circular buffer
+    signal out_next_word:   integer := 0; -- word that should be at the output
+    signal out_next_count:  integer := 0; -- how many pending bytes to move to output
 begin
     process(clock, enable) is
         variable v_len_int:         integer := 0;
@@ -83,6 +82,7 @@ begin
                 write_data <= '0';
             end if;
 
+            -- put word from search buffer at the output data bus
             data_out <= s_buf(out_next_word)
                 & s_buf(out_next_word + 1)
                 & s_buf(out_next_word + 2)
