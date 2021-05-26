@@ -1,5 +1,4 @@
-# LZ77 Decompressor - Hardware implementation
-
+# LZ77 Decoder in VHDL
 A VHDL-based LZ77 decompressor.
 
 ## General idea
