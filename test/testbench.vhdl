@@ -7,7 +7,6 @@ entity testbench is
 end testbench;
 
 architecture behaviour of testbench is
-    type file_t is file of integer;
     type rom is array (2**8 - 1 downto 0) of std_logic_vector(23 downto 0);
     signal s_clock:             std_logic := '0';
     signal s_enable:            std_logic := '1';
@@ -27,7 +26,6 @@ architecture behaviour of testbench is
         others => x"000000"
     );
     signal s_mem_ptr:             integer := 0;
-    file out_buf:        file_t;
 begin
     decoder_inst: entity work.lz77_decoder port map(
         clock       => s_clock,
@@ -38,8 +36,6 @@ begin
         data_out    => s_data_out,
         byte        => s_byte
     );
-
-    file_open(out_buf, "./output/ram", write_mode);
 
     process
         variable v_token: std_logic_vector(23 downto 0);
@@ -54,11 +50,6 @@ begin
 
         s_clock <= '1';
         wait for 5 ns;
-
-        if s_write = '1' then
-            write(out_buf, to_integer(unsigned(s_data_out(31 downto 0))));
-            write(out_buf, to_integer(unsigned(s_data_out(63 downto 32))));
-        end if;
 
         s_clock <= '0';
         wait for 5 ns;
